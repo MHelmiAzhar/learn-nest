@@ -40,8 +40,10 @@ export class BookService {
     if (!updateBook) throw new NotFoundException('Book Not Found!');
     if (updateBook.userId !== userId)
       throw new UnauthorizedException('Your are not authenticated!');
-    await this.bookModel.updateOne(payload);
-    return updateBook;
+    const update = await this.bookModel.findByIdAndUpdate(id, payload, {
+      new: true,
+    });
+    return update;
   }
 
   async deleteBook(id: string, userId: string) {

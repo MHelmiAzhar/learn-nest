@@ -1,14 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-
+  @ApiProperty({
+    example: 'user',
+    required: true,
+  })
   @IsNotEmpty()
   @IsString()
   fullname: string;

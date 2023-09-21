@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common';
 import { createBookDto, updateBookDto } from './dto/index';
 import { AuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Book')
 @Controller('book')
 export class BookController {
   constructor(private bookService: BookService) {}
