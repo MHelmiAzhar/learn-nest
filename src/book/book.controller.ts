@@ -9,6 +9,7 @@ import {
   Put,
   Delete,
   Request,
+  Query,
 } from '@nestjs/common';
 import { createBookDto, updateBookDto } from './dto/index';
 import { AuthGuard } from '../auth/auth.guard';
@@ -29,8 +30,12 @@ export class BookController {
 
   @Get()
   @UseGuards(AuthGuard)
-  async getAllBooks() {
-    return this.bookService.getAllBooks();
+  async getAllBooks(@Query() queryParams) {
+    const page = queryParams.page || 1;
+    const limit = queryParams.limit || 10;
+    const search = queryParams.search || '';
+    const sortBy = queryParams.sortBy || 'year';
+    return this.bookService.getAllBooks({ page, limit, search, sortBy });
   }
 
   @Get(':id')

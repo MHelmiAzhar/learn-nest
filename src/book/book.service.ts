@@ -7,7 +7,6 @@ import mongoose from 'mongoose';
 import { Book } from './schema/book.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { createBookDto, updateBookDto } from './dto';
-
 @Injectable()
 export class BookService {
   constructor(
@@ -24,9 +23,37 @@ export class BookService {
     });
     return book;
   }
-  async getAllBooks() {
-    const books = await this.bookModel.find();
-    return books;
+  async getAllBooks(queryParams: {
+    page: number;
+    limit: number;
+    search: string;
+    sortBy: string;
+  }) {
+    const { page, limit, search, sortBy } = queryParams;
+
+    const skip = (page - 1) * limit;
+
+    const filter: any = {};
+    if (search) {
+      filter.title = { $regex: new RegExp(search, 'i') }; // Search case-insensitive
+    }
+    const itemsQuery = this.bookModel
+      .find(filter)
+      .sort({ [sortBy]: 1 }) // Ganti dengan -1 jika ingin descending
+      .skip(skip)
+      .limit(limit);
+
+    const totalQuery = this.bookModel.countDocuments(filter);
+
+    const [items, total] = await Promise.all([
+      itemsQuery.exec(),
+      totalQuery.exec(),
+    ]);
+
+    return {
+      total,
+      items,
+    };
   }
 
   async getBookById(id: string) {
